@@ -1,17 +1,21 @@
 :root {
-  --bg: #1e1e1e;
-  --text: #ffffff;
-  --button-bg: #333;
+  --bg: #202124;
+  --text: #fff;
+  --button-bg: #3c4043;
+  --button-hover: #5f6368;
   --button-text: #fff;
-  --display-bg: #000;
+  --accent: #8ab4f8;
+  --display-bg: #202124;
 }
 
 .light {
-  --bg: #ffffff;
-  --text: #000;
-  --button-bg: #e0e0e0;
-  --button-text: #000;
-  --display-bg: #f4f4f4;
+  --bg: #fff;
+  --text: #202124;
+  --button-bg: #f1f3f4;
+  --button-hover: #e0e0e0;
+  --button-text: #202124;
+  --accent: #1a73e8;
+  --display-bg: #fff;
 }
 
 body {
@@ -27,15 +31,46 @@ body {
 
 #root {
   width: 100%;
-  max-width: 400px;
+  max-width: 360px;
   padding: 1rem;
+}
+
+.calculator {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.theme-toggle {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
 }
 
 .display {
   background: var(--display-bg);
+  border-radius: 8px;
   padding: 1rem;
-  min-height: 3rem;
-  word-wrap: break-word;
+  min-height: 4rem;
+  word-wrap: anywhere;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.display .result {
+  font-size: 1.5rem;
+  margin-top: 0.25rem;
+  color: var(--accent);
 }
 
 .keypad {
@@ -44,15 +79,21 @@ body {
   gap: 0.5rem;
 }
 
-button {
+.keypad button {
   padding: 1rem;
-  font-size: 1rem;
+  font-size: 1.1rem;
   background: var(--button-bg);
   color: var(--button-text);
   border: none;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
-button:active {
-  opacity: 0.8;
+.keypad button:hover {
+  background: var(--button-hover);
+}
+
+.keypad button.op {
+  color: var(--accent);
 }

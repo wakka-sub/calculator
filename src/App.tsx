@@ -20,9 +20,9 @@ function App() {
     clear,
     backspace,
     evaluateExpression,
-} = useCalculator();
+  } = useCalculator()
 
-  const [theme, setTheme] = useState<'dark'|'light'>('dark')
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
 
   useEffect(() => {
     document.body.className = theme === 'light' ? 'light' : ''
@@ -75,18 +75,29 @@ function App() {
     }
   }, [result])
 
+  const isOperator = (val: string) => !/^[0-9.]$/.test(val) && val !== '(' && val !== ')'
+
   return (
-    <div>
-      <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
-        {theme === 'light' ? 'Dark' : 'Light'} Mode
+    <div className="calculator">
+      <button
+        className="theme-toggle"
+        onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+      >
+        {theme === 'light' ? '🌙' : '☀️'}
       </button>
       <div className="display">
-        <div>{expression}</div>
-        <div>= {result}</div>
+        <div>{expression || '0'}</div>
+        <div className="result">{result}</div>
       </div>
       <div className="keypad">
-        {buttons.map(b => (
-          <button key={b} onClick={() => handleClick(b)}>{b}</button>
+        {buttons.map((b) => (
+          <button
+            key={b}
+            className={isOperator(b) ? 'op' : ''}
+            onClick={() => handleClick(b)}
+          >
+            {b}
+          </button>
         ))}
       </div>
       <ToastContainer position="top-center" />
