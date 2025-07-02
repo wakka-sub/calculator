@@ -53,4 +53,8 @@ describe('useCalculator', () => {
   it('ln', () => {
     expect(Number(run('ln(e)'))).toBeCloseTo(1)
   })
+
+  it('auto closes parentheses', () => {
+    expect(run('(1+2')).toBe('3')
+  })
 })

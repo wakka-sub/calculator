@@ -65,7 +65,11 @@ export const useStore = create<State & Actions>((set, get) => ({
     })),
   evaluateExpr: () => {
     const { tokens, angleMode, lastAns } = get()
-    let expr = tokens.join('')
+    const open = tokens.filter((t) => t === '(').length
+    const close = tokens.filter((t) => t === ')').length
+    const patchedTokens = close < open ? [...tokens, ...Array(open - close).fill(')')] : tokens
+    let expr = patchedTokens
+      .join('')
       .replace(/Ans/g, lastAns)
       .replace(/ln\(/g, 'log(')
       .replace(/%/g, '/100')
