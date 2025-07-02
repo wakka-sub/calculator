@@ -92,6 +92,8 @@ body {
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.2s;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .keypad button:hover {
