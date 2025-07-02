@@ -6,13 +6,25 @@ import { History } from './components/History'
 import { Graph } from './components/Graph'
 import { evaluate } from 'mathjs'
 
-const buttons = [
-  '7','8','9','/','(',
-  '4','5','6','*',')',
-  '1','2','3','-','^',
-  '0','.','=','+','√',
+const basicButtons = [
+  '7', '8', '9', '/',
+  '4', '5', '6', '*',
+  '1', '2', '3', '-',
+  '0', '.', '=', '+',
+  '(', ')', '^', '√',
+  'C', '⌫',
 ]
-const funcs = ['sin','cos','tan','asin','acos','atan','log','ln','C','⌫']
+
+const scientificButtons = [
+  'sin', 'cos', 'tan', 'log',
+  'asin', 'acos', 'atan', 'ln',
+  '(', ')', '^', '√',
+  '7', '8', '9', '/',
+  '4', '5', '6', '*',
+  '1', '2', '3', '-',
+  '0', '.', '=', '+',
+  'C', '⌫',
+]
 
 function App() {
   const {
@@ -87,7 +99,17 @@ function App() {
     }
   }, [result])
 
-  const isOperator = (val: string) => !/^[0-9.]$/.test(val) && val !== '(' && val !== ')'
+  const buttons = scientific ? scientificButtons : basicButtons
+
+  const isOperator = (val: string) =>
+    !/^[0-9.]$/.test(val) && val !== '(' && val !== ')'
+
+  const getClass = (val: string) => {
+    let cls = ''
+    if (isOperator(val)) cls += 'op '
+    if (/^[a-z]/i.test(val)) cls += 'func'
+    return cls.trim()
+  }
 
   return (
     <div className="calculator">
@@ -106,20 +128,10 @@ function App() {
       </div>
       <div className={`keypad ${scientific ? 'scientific' : ''}`}>
         {buttons.map((b) => (
-          <button
-            key={b}
-            className={isOperator(b) ? 'op' : ''}
-            onClick={() => handleClick(b)}
-          >
+          <button key={b} className={getClass(b)} onClick={() => handleClick(b)}>
             {b}
           </button>
         ))}
-        {scientific &&
-          funcs.map((f) => (
-            <button key={f} className="op func" onClick={() => handleClick(f)}>
-              {f}
-            </button>
-          ))}
       </div>
       {showHistory && <History />}
       {graphFn && <Graph fn={graphFn} onClose={() => setGraphFn(null)} />}
