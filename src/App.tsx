@@ -20,8 +20,7 @@ function App() {
     clear,
     backspace,
     evaluateExpression,
-    setExpression,
-  } = useCalculator()
+} = useCalculator();
 
   const [theme, setTheme] = useState<'dark'|'light'>('dark')
 
