@@ -1,0 +1,99 @@
+:root {
+  --bg: #202124;
+  --text: #fff;
+  --button-bg: #3c4043;
+  --button-hover: #5f6368;
+  --button-text: #fff;
+  --accent: #8ab4f8;
+  --display-bg: #202124;
+}
+
+.light {
+  --bg: #fff;
+  --text: #202124;
+  --button-bg: #f1f3f4;
+  --button-hover: #e0e0e0;
+  --button-text: #202124;
+  --accent: #1a73e8;
+  --display-bg: #fff;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  max-width: 360px;
+  padding: 1rem;
+}
+
+.calculator {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.theme-toggle {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.display {
+  background: var(--display-bg);
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 4rem;
+  word-wrap: anywhere;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.display .result {
+  font-size: 1.5rem;
+  margin-top: 0.25rem;
+  color: var(--accent);
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+
+.keypad button {
+  padding: 1rem;
+  font-size: 1.1rem;
+  background: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.keypad button:hover {
+  background: var(--button-hover);
+}
+
+.keypad button.op {
+  color: var(--accent);
+}
