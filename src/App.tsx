@@ -104,15 +104,19 @@ function App() {
         <div>{expression || '0'}</div>
         <div className="result">{result}</div>
       </div>
-      <div className="keypad">
+      <div className={`keypad ${scientific ? 'scientific' : ''}`}>
         {buttons.map((b) => (
-          <button key={b} className={isOperator(b) ? 'op' : ''} onClick={() => handleClick(b)}>
+          <button
+            key={b}
+            className={isOperator(b) ? 'op' : ''}
+            onClick={() => handleClick(b)}
+          >
             {b}
           </button>
         ))}
         {scientific &&
           funcs.map((f) => (
-            <button key={f} className="op" onClick={() => handleClick(f)}>
+            <button key={f} className="op func" onClick={() => handleClick(f)}>
               {f}
             </button>
           ))}
