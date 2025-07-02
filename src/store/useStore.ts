@@ -13,7 +13,9 @@ interface State {
   result: string
   history: HistoryItem[]
   theme: 'light' | 'dark'
-  scientific: boolean
+  angleMode: 'rad' | 'deg'
+  inverse: boolean
+  lastAns: string
   undoStack: Token[][]
   redoStack: Token[][]
 }
@@ -25,7 +27,8 @@ interface Actions {
   backspace: () => void
   evaluateExpr: () => void
   toggleTheme: () => void
-  toggleScientific: () => void
+  setAngleMode: (m: 'rad' | 'deg') => void
+  toggleInverse: () => void
   undo: () => void
   redo: () => void
 }
@@ -35,7 +38,9 @@ export const useStore = create<State & Actions>((set, get) => ({
   result: '',
   history: [],
   theme: 'dark',
-  scientific: false,
+  angleMode: 'rad',
+  inverse: false,
+  lastAns: '0',
   undoStack: [],
   setTokens: (tokens) => set({ tokens }),
   redoStack: [],
@@ -59,14 +64,28 @@ export const useStore = create<State & Actions>((set, get) => ({
       redoStack: [],
     })),
   evaluateExpr: () => {
-    const expr = get().tokens.join('')
+    const { tokens, angleMode, lastAns } = get()
+    let expr = tokens.join('')
+      .replace(/Ans/g, lastAns)
       .replace(/ln\(/g, 'log(')
-      .replace(/ in /g, ' to ')
+      .replace(/%/g, '/100')
+    const scope = angleMode === 'deg'
+      ? {
+          sin: (x: number) => Math.sin((x * Math.PI) / 180),
+          cos: (x: number) => Math.cos((x * Math.PI) / 180),
+          tan: (x: number) => Math.tan((x * Math.PI) / 180),
+          asin: (x: number) => (Math.asin(x) * 180) / Math.PI,
+          acos: (x: number) => (Math.acos(x) * 180) / Math.PI,
+          atan: (x: number) => (Math.atan(x) * 180) / Math.PI,
+        }
+      : {}
     try {
-      const value = String(evaluate(expr))
+      const value = String(evaluate(expr, scope))
       set((state) => ({
         result: value,
+        lastAns: value,
         history: [...state.history, { expression: expr, result: value }],
+        tokens: [value],
         undoStack: [...state.undoStack, state.tokens],
         redoStack: [],
       }))
@@ -75,7 +94,8 @@ export const useStore = create<State & Actions>((set, get) => ({
     }
   },
   toggleTheme: () => set((s) => ({ theme: s.theme === 'light' ? 'dark' : 'light' })),
-  toggleScientific: () => set((s) => ({ scientific: !s.scientific })),
+  setAngleMode: (m) => set({ angleMode: m }),
+  toggleInverse: () => set((s) => ({ inverse: !s.inverse })),
   undo: () =>
     set((state) => {
       const prev = state.undoStack.pop()

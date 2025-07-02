@@ -75,14 +75,9 @@ body {
 
 .keypad {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: 0.5rem;
 }
-
-.keypad.scientific {
-  grid-template-columns: repeat(5, 1fr);
-}
-
 .keypad button {
   padding: 1rem;
   font-size: 1.1rem;
@@ -97,6 +92,10 @@ body {
 }
 
 .keypad button:hover {
+  background: var(--button-hover);
+}
+
+.keypad button.active {
   background: var(--button-hover);
 }
 

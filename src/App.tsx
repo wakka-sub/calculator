@@ -6,21 +6,12 @@ import { History } from './components/History'
 import { Graph } from './components/Graph'
 import { evaluate } from 'mathjs'
 
-const basicButtons = [
-  'C', '⌫', '(', ')',
-  '7', '8', '9', '/',
-  '4', '5', '6', '*',
-  '1', '2', '3', '-',
-  '0', '.', '=', '+',
-]
-
-const scientificButtons = [
-  'sin', 'cos', 'tan', 'asin', 'acos',
-  'atan', 'log', 'ln', '√', '^',
-  '(', ')', '7', '8', '9',
-  'C', '⌫', '4', '5', '6',
-  '*', '/', '1', '2', '3',
-  '0', '.', '=', '+', '-',
+const buttons = [
+  'Rad', 'Deg', 'x!', '(', ')', '%', 'AC',
+  'Inv', 'sin', 'ln', '7', '8', '9', '÷',
+  'π', 'cos', 'log', '4', '5', '6', '×',
+  'e', 'tan', '√', '1', '2', '3', '-',
+  'Ans', 'EXP', 'x^y', '0', '.', '=', '+',
 ]
 
 function App() {
@@ -32,9 +23,11 @@ function App() {
     backspace,
     evaluateExpression,
     toggleTheme,
+    setAngleMode,
+    toggleInverse,
+    angleMode,
+    inverse,
     theme,
-    scientific,
-    toggleScientific
   } = useCalculator()
   const [showHistory, setShowHistory] = useState(false)
   const [graphFn, setGraphFn] = useState<((x:number)=>number)|null>(null)
@@ -57,33 +50,73 @@ function App() {
 
   const handleClick = (val: string) => {
     switch (val) {
-      case '=':
+      case '=': {
+        const expr = expression
         evaluateExpression()
-        if(expression.includes('x')) {
+        if (expr.includes('x')) {
           try {
-            const compiled = evaluate('f(x)=' + expression.replace('=', '')) as any
-            setGraphFn(() => (x:number)=>compiled(x))
+            const compiled = evaluate('f(x)=' + expr) as any
+            setGraphFn(() => (x: number) => compiled(x))
           } catch {}
         }
         return
-      case 'C':
+      }
+      case 'AC':
         clear()
         break
       case '⌫':
         backspace()
         break
+      case 'Rad':
+        setAngleMode('rad')
+        break
+      case 'Deg':
+        setAngleMode('deg')
+        break
+      case 'Inv':
+        toggleInverse()
+        break
       case '√':
         append('sqrt(')
         break
       case 'sin':
+        append((inverse ? 'asin' : 'sin') + '(')
+        break
       case 'cos':
+        append((inverse ? 'acos' : 'cos') + '(')
+        break
       case 'tan':
-      case 'asin':
-      case 'acos':
-      case 'atan':
-      case 'log':
+        append((inverse ? 'atan' : 'tan') + '(')
+        break
       case 'ln':
-        append(val + '(')
+        append(inverse ? 'exp(' : 'ln(')
+        break
+      case 'log':
+        append(inverse ? '10^(' : 'log(')
+        break
+      case 'π':
+        append('pi')
+        break
+      case 'e':
+        append('e')
+        break
+      case 'x!':
+        append('!')
+        break
+      case 'x^y':
+        append('^')
+        break
+      case 'EXP':
+        append('E')
+        break
+      case 'Ans':
+        append('Ans')
+        break
+      case '÷':
+        append('/')
+        break
+      case '×':
+        append('*')
         break
       default:
         append(val)
@@ -96,7 +129,7 @@ function App() {
     }
   }, [result])
 
-  const buttons = scientific ? scientificButtons : basicButtons
+  const btns = buttons
 
   const isOperator = (val: string) =>
     !/^[0-9.]$/.test(val) && val !== '(' && val !== ')'
@@ -104,7 +137,13 @@ function App() {
   const getClass = (val: string) => {
     let cls = ''
     if (isOperator(val)) cls += 'op '
-    if (/^[a-z]/i.test(val)) cls += 'func'
+    if (/^[a-zπe]/i.test(val)) cls += 'func '
+    if (
+      (val === 'Rad' && angleMode === 'rad') ||
+      (val === 'Deg' && angleMode === 'deg') ||
+      (val === 'Inv' && inverse)
+    )
+      cls += 'active'
     return cls.trim()
   }
 
@@ -116,15 +155,12 @@ function App() {
       <button className="theme-toggle" onClick={() => setShowHistory(!showHistory)}>
         📜
       </button>
-      <button className="theme-toggle" onClick={toggleScientific}>
-        {scientific ? '123' : 'ƒ'}
-      </button>
       <div className="display">
         <div>{expression || '0'}</div>
         <div className="result">{result}</div>
       </div>
-      <div className={`keypad ${scientific ? 'scientific' : ''}`}>
-        {buttons.map((b) => (
+      <div className="keypad">
+        {btns.map((b) => (
           <button key={b} className={getClass(b)} onClick={() => handleClick(b)}>
             {b}
           </button>
