@@ -78,7 +78,6 @@ body {
   grid-template-columns: repeat(7, 1fr);
   gap: 0.5rem;
 }
-
 .keypad button {
   padding: 1rem;
   font-size: 1.1rem;
