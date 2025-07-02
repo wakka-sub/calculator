@@ -5,14 +5,13 @@ import { useCalculator } from './useCalculator'
 describe('useCalculator', () => {
   const run = (expr: string) => {
     const { result } = renderHook(() => useCalculator())
-    let value: string | undefined
     act(() => {
-      result.current.setExpression(expr)
+      result.current.setTokens(expr.split(''))
     })
     act(() => {
-      value = result.current.evaluateExpression()
+      result.current.evaluateExpression()
     })
-    return value!
+    return result.current.result
   }
 
   it('adds numbers', () => {

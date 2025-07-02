@@ -1,35 +1,24 @@
-import { useState, useCallback } from 'react'
-import { evaluate } from 'mathjs'
+import { useStore } from '../store/useStore'
 
 export function useCalculator() {
-  const [expression, setExpression] = useState('')
-  const [result, setResult] = useState('')
+  const {
+    tokens,
+    result,
+    append,
+    clear,
+    backspace,
+    evaluateExpr,
+    undo,
+    redo,
+    toggleTheme,
+    toggleScientific,
+    scientific,
+    theme,
+    history,
+    setTokens,
+  } = useStore()
 
-  const append = useCallback((value: string) => {
-    setExpression((prev) => prev + value)
-  }, [])
-
-  const clear = useCallback(() => {
-    setExpression('')
-    setResult('')
-  }, [])
-
-  const backspace = useCallback(() => {
-    setExpression((prev) => prev.slice(0, -1))
-  }, [])
-
-  const evaluateExpression = useCallback(() => {
-    try {
-      const expr = expression.replace(/ln\(/g, 'log(')
-      const evalResult = evaluate(expr)
-      const value = String(evalResult)
-      setResult(value)
-      return value
-    } catch {
-      setResult('Error')
-      return 'Error'
-    }
-  }, [expression])
+  const expression = tokens.join('')
 
   return {
     expression,
@@ -37,7 +26,14 @@ export function useCalculator() {
     append,
     clear,
     backspace,
-    evaluateExpression,
-    setExpression,
+    evaluateExpression: evaluateExpr,
+    undo,
+    redo,
+    toggleTheme,
+    toggleScientific,
+    scientific,
+    theme,
+    history,
+    setTokens,
   }
 }

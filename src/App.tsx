@@ -2,15 +2,17 @@ import { useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useCalculator } from './hooks/useCalculator'
+import { History } from './components/History'
+import { Graph } from './components/Graph'
+import { evaluate } from 'mathjs'
 
 const buttons = [
   '7','8','9','/','(',
   '4','5','6','*',')',
   '1','2','3','-','^',
   '0','.','=','+','√',
-  'sin','cos','tan','asin','acos',
-  'atan','log','ln','C','⌫'
 ]
+const funcs = ['sin','cos','tan','asin','acos','atan','log','ln','C','⌫']
 
 function App() {
   const {
@@ -20,9 +22,13 @@ function App() {
     clear,
     backspace,
     evaluateExpression,
+    toggleTheme,
+    theme,
+    scientific,
+    toggleScientific
   } = useCalculator()
-
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  const [showHistory, setShowHistory] = useState(false)
+  const [graphFn, setGraphFn] = useState<((x:number)=>number)|null>(null)
 
   useEffect(() => {
     document.body.className = theme === 'light' ? 'light' : ''
@@ -44,7 +50,13 @@ function App() {
     switch (val) {
       case '=':
         evaluateExpression()
-        break
+        if(expression.includes('x')) {
+          try {
+            const compiled = evaluate('f(x)=' + expression.replace('=', '')) as any
+            setGraphFn(() => (x:number)=>compiled(x))
+          } catch {}
+        }
+        return
       case 'C':
         clear()
         break
@@ -79,11 +91,14 @@ function App() {
 
   return (
     <div className="calculator">
-      <button
-        className="theme-toggle"
-        onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-      >
+      <button className="theme-toggle" onClick={toggleTheme}>
         {theme === 'light' ? '🌙' : '☀️'}
+      </button>
+      <button className="theme-toggle" onClick={() => setShowHistory(!showHistory)}>
+        📜
+      </button>
+      <button className="theme-toggle" onClick={toggleScientific}>
+        {scientific ? '123' : 'ƒ'}
       </button>
       <div className="display">
         <div>{expression || '0'}</div>
@@ -91,15 +106,19 @@ function App() {
       </div>
       <div className="keypad">
         {buttons.map((b) => (
-          <button
-            key={b}
-            className={isOperator(b) ? 'op' : ''}
-            onClick={() => handleClick(b)}
-          >
+          <button key={b} className={isOperator(b) ? 'op' : ''} onClick={() => handleClick(b)}>
             {b}
           </button>
         ))}
+        {scientific &&
+          funcs.map((f) => (
+            <button key={f} className="op" onClick={() => handleClick(f)}>
+              {f}
+            </button>
+          ))}
       </div>
+      {showHistory && <History />}
+      {graphFn && <Graph fn={graphFn} onClose={() => setGraphFn(null)} />}
       <ToastContainer position="top-center" />
     </div>
   )
