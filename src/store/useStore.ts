@@ -65,14 +65,13 @@ export const useStore = create<State & Actions>((set, get) => ({
     })),
   evaluateExpr: () => {
     const { tokens, angleMode, lastAns } = get()
-    const open = tokens.filter((t) => t === '(').length
-    const close = tokens.filter((t) => t === ')').length
-    const patchedTokens = close < open ? [...tokens, ...Array(open - close).fill(')')] : tokens
-    let expr = patchedTokens
-      .join('')
+    let expr = tokens.join('')
       .replace(/Ans/g, lastAns)
       .replace(/ln\(/g, 'log(')
       .replace(/%/g, '/100')
+    const open = (expr.match(/\(/g) || []).length
+    const close = (expr.match(/\)/g) || []).length
+    if (close < open) expr += ')'.repeat(open - close)
     const scope = angleMode === 'deg'
       ? {
           sin: (x: number) => Math.sin((x * Math.PI) / 180),

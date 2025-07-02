@@ -57,4 +57,8 @@ describe('useCalculator', () => {
   it('auto closes parentheses', () => {
     expect(run('(1+2')).toBe('3')
   })
+
+  it('auto closes nested function parentheses', () => {
+    expect(run('987/log(89')).toBe(run('987/log(89)'))
+  })
 })
